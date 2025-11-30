@@ -27,7 +27,7 @@ async function handleFormSubmit(event) {
   event.preventDefault(); // Stop the default form submission
 
   const form = event.target;
-  const statusMessage = document.createElement('p'); // Create an element for the status message
+  const statusMessage = document.createElement('p');
   statusMessage.textContent = 'Sending...';
   statusMessage.style.textAlign = 'center';
   form.append(statusMessage);
@@ -35,46 +35,38 @@ async function handleFormSubmit(event) {
   const formData = new FormData(form);
   
   try {
-    const response = await fetch(form.action, { // Use fetch to send data to Formspree
+    const response = await fetch(form.action, { 
       method: form.method,
       body: formData,
       headers: {
-        'Accept': 'application/json'
+        // This is crucial for JSON response/AJAX mode
+        'Accept': 'application/json' 
       }
     });
 
-    statusMessage.remove(); // Remove 'Sending...' message
+    statusMessage.remove(); 
     
     if (response.ok) {
-      // Show success message
+      // SUCCESS: The form data was sent.
       alert('Thank you for your message! I will get back to you soon.');
-      // Reset form
       form.reset();
     } else {
-      // Handle server-side errors
+      // ERROR: Submission failed (e.g., failed validation, not activated).
       const data = await response.json();
       if (data.errors) {
         alert('Oops! There was an issue submitting your form. Please check the fields.');
       } else {
-        alert('Oops! There was an issue submitting your form. Please try again.');
+        alert('Oops! There was an issue submitting your form. Please try again. (Check FormSubmit activation)');
       }
     }
   } catch (error) {
+    // FATAL ERROR: Network or connection issue.
     statusMessage.remove();
     console.error('Submission error:', error);
     alert('An unexpected error occurred. Please try again later.');
   }
 }
-  
-  // Here you would typically send the data to a server
-  console.log('Form submitted:', data);
-  
-  // Show success message (you can customize this)
-  alert('Thank you for your message! I will get back to you soon.');
-  
-  // Reset form
-  form.reset();
-}
+// <-- The function MUST end here.
 
 // Add scroll-based animations
 function addScrollAnimations() {
