@@ -22,12 +22,49 @@ function animateSkillBars() {
 }
 
 // Handle contact form submission
-function handleFormSubmit(event) {
-  event.preventDefault();
-  
+// Handle contact form submission
+async function handleFormSubmit(event) {
+  event.preventDefault(); // Stop the default form submission
+
   const form = event.target;
+  const statusMessage = document.createElement('p'); // Create an element for the status message
+  statusMessage.textContent = 'Sending...';
+  statusMessage.style.textAlign = 'center';
+  form.append(statusMessage);
+  
   const formData = new FormData(form);
-  const data = Object.fromEntries(formData);
+  
+  try {
+    const response = await fetch(form.action, { // Use fetch to send data to Formspree
+      method: form.method,
+      body: formData,
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    statusMessage.remove(); // Remove 'Sending...' message
+    
+    if (response.ok) {
+      // Show success message
+      alert('Thank you for your message! I will get back to you soon.');
+      // Reset form
+      form.reset();
+    } else {
+      // Handle server-side errors
+      const data = await response.json();
+      if (data.errors) {
+        alert('Oops! There was an issue submitting your form. Please check the fields.');
+      } else {
+        alert('Oops! There was an issue submitting your form. Please try again.');
+      }
+    }
+  } catch (error) {
+    statusMessage.remove();
+    console.error('Submission error:', error);
+    alert('An unexpected error occurred. Please try again later.');
+  }
+}
   
   // Here you would typically send the data to a server
   console.log('Form submitted:', data);
