@@ -217,7 +217,7 @@ function animateSkillBars() {
 
 function addScrollAnimations() {
     const animatedElements = document.querySelectorAll(
-        '.hero-text, .about-image, .about-content, .project-card, .skill-category, .tool-card, .contact-info, .contact-form'
+        '.hero-text, .about-image, .about-content, .project-card, .skill-category, .tool-card'
     );
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
