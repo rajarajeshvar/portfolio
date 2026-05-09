@@ -799,3 +799,140 @@ textarea.form-input {
         opacity: 0.2;
     }
 }
+
+/* Modal and Admin Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+}
+
+.modal-content {
+    background-color: var(--color-background);
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    width: 90%;
+    max-width: 1000px;
+    box-shadow: var(--shadow-large);
+    position: relative;
+    animation: scaleIn 0.3s ease-out;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.close-modal {
+    color: var(--color-muted-foreground);
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    border: none;
+    transition: color 0.3s;
+}
+
+.close-modal:hover {
+    color: var(--color-accent);
+}
+
+.admin-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+    .admin-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.admin-form-container {
+    background: var(--color-muted);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid var(--color-border);
+}
+
+.admin-list-container {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.admin-project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.admin-project-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-border);
+    transition: all 0.3s;
+}
+
+.admin-project-item:hover {
+    transform: translateX(5px);
+    border-color: var(--color-accent);
+}
+
+.admin-project-info h4 {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.admin-project-info p {
+    font-size: 0.75rem;
+    color: var(--color-muted-foreground);
+}
+
+.admin-item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-sm {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-muted-foreground);
+}
+
+.btn-sm:hover {
+    background: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
+.btn-delete:hover {
+    background: var(--color-coral);
+    border-color: var(--color-coral);
+}

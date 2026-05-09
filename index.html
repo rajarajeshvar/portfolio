@@ -121,59 +121,8 @@
                 <div class="section-divider"></div>
                 <p class="section-subtitle">A selection of my recent work</p>
             </div>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="yieldsense.png" alt="YieldSense - CLMM Yield Optimizer">
-                        <div class="project-overlay">
-                            <a href="https://github.com/rajarajeshvar/yieldsense" target="_blank" class="project-btn">View Project</a>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <div class="project-tags">
-                            <span class="tag">AI Analysis</span>
-                            <span class="tag">DeFi</span>
-                            <span class="tag">Web App</span>
-                        </div>
-                        <h3 class="project-title">YieldSense: CLMM Optimizer</h3>
-                        <p class="project-desc">A sophisticated tool for optimizing yields on Concentrated Liquidity Market Makers using AI-driven analysis and automated rebalancing.</p>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop" alt="Mobile Banking App">
-                        <div class="project-overlay">
-                            <button class="project-btn">View Project</button>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <div class="project-tags">
-                            <span class="tag">Mobile</span>
-                            <span class="tag">FinTech</span>
-                        </div>
-                        <h3 class="project-title">Mobile Banking App</h3>
-                        <p class="project-desc">Intuitive banking experience with advanced security features</p>
-                    </div>
-                </div>
-                
-                
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=600&fit=crop" alt="Portfolio Website">
-                        <div class="project-overlay">
-                            <button class="project-btn">View Project</button>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <div class="project-tags">
-                            <span class="tag">Web Design</span>
-                            <span class="tag">Portfolio</span>
-                        </div>
-                        <h3 class="project-title">Portfolio Website</h3>
-                        <p class="project-desc">Elegant portfolio showcasing creative photography work</p>
-                    </div>
-                </div>
+            <div id="projects-container" class="projects-grid">
+                <!-- Projects will be rendered dynamically here -->
             </div>
         </div>
     </section>
@@ -415,6 +364,11 @@
             <div class="footer-content">
                 <p class="footer-text">&copy; 2024 RajaRajeshvar. All rights reserved.</p>
                 <div class="footer-social">
+                    <a href="#" class="social-link" id="admin-login-btn" title="Admin Panel">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 15V17M6 21H18C19.1046 21 20 20.1046 20 19V5C20 3.89543 19.1046 3 18 3H6C4.89543 3 4 3.89543 4 5V19C4 20.1046 4.89543 21 6 21Z"/>
+                        </svg>
+                    </a>
                     <a href="https://github.com" class="social-link" target="_blank" rel="noopener noreferrer">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
@@ -439,6 +393,53 @@
             </div>
         </div>
     </footer>
+
+    <!-- Admin Panel Modal -->
+    <div id="admin-modal" class="modal">
+        <div class="modal-content admin-panel">
+            <div class="modal-header">
+                <h2 class="section-title">Project Manager</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="admin-grid">
+                <div class="admin-form-container">
+                    <form id="project-form">
+                        <input type="hidden" id="project-id">
+                        <div class="form-group">
+                            <label class="form-label">Project Title</label>
+                            <input type="text" id="project-title-input" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea id="project-desc-input" class="form-input" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Image URL</label>
+                            <input type="text" id="project-image-input" class="form-input" placeholder="e.g., yieldsense.png or Unsplash URL" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Project Link</label>
+                            <input type="text" id="project-link-input" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tags (comma separated)</label>
+                            <input type="text" id="project-tags-input" class="form-input" placeholder="AI, DeFi, Web App" required>
+                        </div>
+                        <div class="admin-actions">
+                            <button type="submit" class="btn btn-primary" id="save-project-btn">Save Project</button>
+                            <button type="button" class="btn btn-secondary" id="cancel-edit-btn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="admin-list-container">
+                    <h3 class="highlight-title">Existing Projects</h3>
+                    <div id="admin-project-list" class="admin-project-list">
+                        <!-- Admin list items will be here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
