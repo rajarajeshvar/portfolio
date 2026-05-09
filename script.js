@@ -1,37 +1,43 @@
-// Project Data Management
-const DEFAULT_PROJECTS = [
-    {
-        id: '1',
-        title: 'YieldSense: CLMM Optimizer',
-        description: 'A sophisticated tool for optimizing yields on Concentrated Liquidity Market Makers using AI-driven analysis and automated rebalancing.',
-        image: 'yieldsense.png',
-        link: 'https://github.com/rajarajeshvar/yieldsense',
-        tags: ['AI Analysis', 'DeFi', 'Web App']
-    },
-    {
-        id: '2',
-        title: 'Mobile Banking App',
-        description: 'Intuitive banking experience with advanced security features',
-        image: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop',
-        link: '#',
-        tags: ['Mobile', 'FinTech']
-    },
-    {
-        id: '3',
-        title: 'Portfolio Website',
-        description: 'Elegant portfolio showcasing creative photography work',
-        image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=600&fit=crop',
-        link: '#',
-        tags: ['Web Design', 'Portfolio']
-    }
-];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-let projects = JSON.parse(localStorage.getItem('portfolio_projects')) || DEFAULT_PROJECTS;
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAZ1d4Y1Vev6BWfCcdeDgdETSFha8BdrGU",
+  authDomain: "portfolio-c387b.firebaseapp.com",
+  projectId: "portfolio-c387b",
+  storageBucket: "portfolio-c387b.firebasestorage.app",
+  messagingSenderId: "87374592053",
+  appId: "1:87374592053:web:600d6a7dfa4194bbc0997c",
+  measurementId: "G-4JWCS5EHC5"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const projectsCol = collection(db, 'projects');
+
+let projects = [];
+
+// Real-time synchronization with Firestore
+onSnapshot(projectsCol, (snapshot) => {
+    projects = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+    renderProjects();
+    renderAdminList();
+});
 
 // Render Projects to the main grid
 function renderProjects() {
     const container = document.getElementById('projects-container');
     if (!container) return;
+
+    if (projects.length === 0) {
+        container.innerHTML = '<p class="section-subtitle">No projects found. Use the admin panel to add some!</p>';
+        return;
+    }
 
     container.innerHTML = projects.map(project => `
         <div class="project-card" data-id="${project.id}">
@@ -43,7 +49,7 @@ function renderProjects() {
             </div>
             <div class="project-content">
                 <div class="project-tags">
-                    ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    ${project.tags ? project.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : ''}
                 </div>
                 <h3 class="project-title">${project.title}</h3>
                 <p class="project-desc">${project.description}</p>
@@ -65,15 +71,15 @@ function renderAdminList() {
         <div class="admin-project-item">
             <div class="admin-project-info">
                 <h4>${project.title}</h4>
-                <p>${project.tags.join(', ')}</p>
+                <p>${project.tags ? project.tags.join(', ') : ''}</p>
             </div>
             <div class="admin-item-actions">
-                <button class="btn-sm" onclick="editProject('${project.id}')" title="Edit">
+                <button class="btn-sm edit-btn-trigger" data-id="${project.id}" title="Edit">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
                 </button>
-                <button class="btn-sm btn-delete" onclick="deleteProject('${project.id}')" title="Delete">
+                <button class="btn-sm btn-delete delete-btn-trigger" data-id="${project.id}" title="Delete">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                     </svg>
@@ -81,10 +87,18 @@ function renderAdminList() {
             </div>
         </div>
     `).join('');
+
+    // Add event listeners to buttons
+    document.querySelectorAll('.edit-btn-trigger').forEach(btn => {
+        btn.onclick = () => editProject(btn.getAttribute('data-id'));
+    });
+    document.querySelectorAll('.delete-btn-trigger').forEach(btn => {
+        btn.onclick = () => deleteProject(btn.getAttribute('data-id'));
+    });
 }
 
-// Global functions for admin actions
-window.editProject = function(id) {
+// Admin actions
+async function editProject(id) {
     const project = projects.find(p => p.id === id);
     if (!project) return;
 
@@ -93,22 +107,20 @@ window.editProject = function(id) {
     document.getElementById('project-desc-input').value = project.description;
     document.getElementById('project-image-input').value = project.image;
     document.getElementById('project-link-input').value = project.link;
-    document.getElementById('project-tags-input').value = project.tags.join(', ');
+    document.getElementById('project-tags-input').value = project.tags ? project.tags.join(', ') : '';
     
     document.getElementById('save-project-btn').textContent = 'Update Project';
-};
+}
 
-window.deleteProject = function(id) {
+async function deleteProject(id) {
     if (confirm('Are you sure you want to delete this project?')) {
-        projects = projects.filter(p => p.id !== id);
-        saveAndRefresh();
+        try {
+            await deleteDoc(doc(db, 'projects', id));
+        } catch (error) {
+            console.error("Error deleting project:", error);
+            alert("Error deleting project. Check your Firestore rules.");
+        }
     }
-};
-
-function saveAndRefresh() {
-    localStorage.setItem('portfolio_projects', JSON.stringify(projects));
-    renderProjects();
-    renderAdminList();
 }
 
 // Initialize Admin Panel
@@ -146,11 +158,10 @@ function initAdminPanel() {
         if (event.target == modal) closeModal();
     };
 
-    form.onsubmit = (e) => {
+    form.onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById('project-id').value;
-        const newProject = {
-            id: id || Date.now().toString(),
+        const projectData = {
             title: document.getElementById('project-title-input').value,
             description: document.getElementById('project-desc-input').value,
             image: document.getElementById('project-image-input').value,
@@ -158,21 +169,22 @@ function initAdminPanel() {
             tags: document.getElementById('project-tags-input').value.split(',').map(t => t.trim())
         };
 
-        if (id) {
-            const index = projects.findIndex(p => p.id === id);
-            projects[index] = newProject;
-        } else {
-            projects.push(newProject);
+        try {
+            if (id) {
+                await updateDoc(doc(db, 'projects', id), projectData);
+            } else {
+                await addDoc(projectsCol, projectData);
+            }
+            closeModal();
+        } catch (error) {
+            console.error("Error saving project:", error);
+            alert("Error saving project. Check your Firestore rules.");
         }
-
-        saveAndRefresh();
-        closeModal();
     };
 }
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    renderProjects();
     initAdminPanel();
     
     // Existing initializations
@@ -194,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Original functions (kept for reference and use)
+// Original functions
 function scrollToSection(sectionId) {
     const element = document.getElementById(sectionId);
     if (element) {
