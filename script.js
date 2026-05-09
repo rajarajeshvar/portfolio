@@ -20,11 +20,42 @@ const projectsCol = collection(db, 'projects');
 let projects = [];
 
 // Real-time synchronization with Firestore
-onSnapshot(projectsCol, (snapshot) => {
+onSnapshot(projectsCol, async (snapshot) => {
     projects = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
     }));
+    
+    // Auto-populate if empty
+    if (projects.length === 0) {
+        const DEFAULT_PROJECTS = [
+            {
+                title: 'YieldSense: CLMM Optimizer',
+                description: 'A sophisticated tool for optimizing yields on Concentrated Liquidity Market Makers using AI-driven analysis and automated rebalancing.',
+                image: 'yieldsense.png',
+                link: 'https://github.com/rajarajeshvar/yieldsense',
+                tags: ['AI Analysis', 'DeFi', 'Web App']
+            },
+            {
+                title: 'Mobile Banking App',
+                description: 'Intuitive banking experience with advanced security features',
+                image: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop',
+                link: 'https://github.com/rajarajeshvar',
+                tags: ['Mobile', 'FinTech']
+            },
+            {
+                title: 'Portfolio Website',
+                description: 'Elegant portfolio showcasing creative photography work',
+                image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=600&fit=crop',
+                link: 'https://portfolio-theta-sable-57.vercel.app/',
+                tags: ['Web Design', 'Portfolio']
+            }
+        ];
+        for (const p of DEFAULT_PROJECTS) {
+            await addDoc(projectsCol, p);
+        }
+    }
+
     renderProjects();
     renderAdminList();
 });
