@@ -123,8 +123,13 @@ function initAdminPanel() {
 
     loginBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        modal.style.display = 'block';
-        renderAdminList();
+        const password = prompt('Please enter the admin password:');
+        if (password === 'raja2006') {
+            modal.style.display = 'block';
+            renderAdminList();
+        } else if (password !== null) {
+            alert('Incorrect password!');
+        }
     });
 
     const closeModal = () => {
